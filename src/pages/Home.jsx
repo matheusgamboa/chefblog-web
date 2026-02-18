@@ -84,8 +84,12 @@ export const Home = () => {
                             <span className="text-primary font-bold text-sm uppercase tracking-[0.2em]">Curadoria do Chef</span>
                             <h1 className="text-[#181411] text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight">Receitas em Destaque</h1>
                         </div>
-                        <Button variant="secondary" icon="trending_flat">
-                            Ver todos os desafios
+                        <Button
+                            variant="secondary"
+                            icon="trending_flat"
+                            onClick={() => window.location.href = '/recipes'}
+                        >
+                            Ver todas as receitas
                         </Button>
                     </div>
 

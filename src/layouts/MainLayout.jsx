@@ -75,11 +75,7 @@ const Header = () => {
                     <div className="flex items-center gap-3">
                         {user ? (
                             <>
-                                <button className="flex items-center justify-center rounded-full size-11 bg-white border border-primary/10 text-[#181411] hover:bg-primary/10 transition-all relative">
-                                    <span className="material-symbols-outlined">notifications</span>
-                                    <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-white"></span>
-                                </button>
-                                <div className="h-10 w-[1px] bg-primary/10 mx-1"></div>
+
                                 <button
                                     type="button"
                                     className="flex items-center gap-3 relative profile-menu-container bg-transparent border-none p-0 outline-none cursor-pointer"

@@ -82,16 +82,16 @@ const Header = () => {
                                 <div className="h-10 w-[1px] bg-primary/10 mx-1"></div>
                                 <button
                                     type="button"
-                                    className="flex items-center gap-3 relative profile-menu-container bg-transparent border-none p-0 outline-none"
+                                    className="flex items-center gap-3 relative profile-menu-container bg-transparent border-none p-0 outline-none cursor-pointer"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setIsProfileMenuOpen(!isProfileMenuOpen);
                                     }}
                                 >
-                                    <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-11 border-2 border-primary bg-primary/10 flex items-center justify-center text-primary font-black shadow-sm">
+                                    <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-11 border-2 border-primary bg-primary/10 flex items-center justify-center text-primary font-black shadow-sm pointer-events-none">
                                         {user.email[0].toUpperCase()}
                                     </div>
-                                    <div className="hidden md:block text-left">
+                                    <div className="hidden md:block text-left pointer-events-none">
                                         <p className="text-sm font-bold text-[#181411] leading-none mb-0.5">Olá, Chef!</p>
                                         <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Nível {Math.floor((user.user_metadata?.xp || 0) / 75) + 1}</p>
                                     </div>
@@ -112,7 +112,7 @@ const Header = () => {
 
                                         <div className="h-px bg-gray-100 my-1 mx-2"></div>
 
-                                        <button onClick={(e) => { e.stopPropagation(); handleLogout(); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                                        <button onClick={(e) => { e.stopPropagation(); handleLogout(); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors rounded-b-lg">
                                             <span className="material-symbols-outlined text-[20px]">logout</span> Sair
                                         </button>
                                     </div>

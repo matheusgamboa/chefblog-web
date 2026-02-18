@@ -150,7 +150,13 @@ export const GamifiedCooking = () => {
                     <p className="text-3xl font-black text-primary">+{xpEarned || recipe?.xp_reward || 50} XP</p>
                 </div>
                 <div className="flex gap-4">
-                    <Button variant="outline" onClick={() => navigate(`/recipe/${slug}`)}>Ver Receita</Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate(`/recipe/${slug}`)}
+                        className="bg-transparent border-primary text-primary hover:bg-primary/10"
+                    >
+                        Ver Receita
+                    </Button>
                     <Button onClick={() => navigate('/profile')}>Meu Perfil</Button>
                 </div>
             </div>

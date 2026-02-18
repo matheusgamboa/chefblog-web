@@ -11,18 +11,53 @@ export const Home = () => {
     const [featuredRecipes, setFeaturedRecipes] = useState([]);
     const [trendingRecipes, setTrendingRecipes] = useState([]);
     const [popularRecipes, setPopularRecipes] = useState([]);
+    const [influencer, setInfluencer] = useState(null);
+    const [influencerRecipes, setInfluencerRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const tipsContainerRef = useRef(null);
 
     useEffect(() => {
         fetchRecipes();
+        fetchInfluencer();
     }, []);
+
+    const fetchInfluencer = async () => {
+        try {
+            // Fetch influencer of the week
+            const { data: influencerData } = await supabase
+                .from('influencers')
+                .select('*')
+                .eq('is_of_the_week', true)
+                .single();
+
+            if (influencerData) {
+                setInfluencer(influencerData);
+
+                // Fetch influencer recipes with linked recipe details
+                const { data: recipes } = await supabase
+                    .from('influencer_recipes')
+                    .select(`
+                        id,
+                        tag,
+                        subtitle,
+                        recipes (*)
+                    `)
+                    .eq('influencer_id', influencerData.id);
+
+                if (recipes) {
+                    setInfluencerRecipes(recipes);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching influencer:', error.message);
+        }
+    };
 
     const fetchRecipes = async () => {
         try {
             setLoading(true);
             // Fetch Featured Recipes (is_featured = true)
-            const { data: featured, error: featuredError } = await supabase
+            const { data: featured } = await supabase
                 .from('recipes')
                 .select('*')
                 .eq('is_featured', true)
@@ -33,7 +68,7 @@ export const Home = () => {
             }
 
             // Fetch Trending Recipes (ordered by rating desc)
-            const { data: trending, error: trendingError } = await supabase
+            const { data: trending } = await supabase
                 .from('recipes')
                 .select('*')
                 .order('rating', { ascending: false })
@@ -43,8 +78,8 @@ export const Home = () => {
                 setTrendingRecipes(trending);
             }
 
-            // Fetch Popular Recipes (different from trending, ordered by total_reviews or rating)
-            const { data: popular, error: popularError } = await supabase
+            // Fetch Popular Recipes
+            const { data: popular } = await supabase
                 .from('recipes')
                 .select('*')
                 .order('rating', { ascending: false })
@@ -151,37 +186,51 @@ export const Home = () => {
                     </div>
                 </div>
 
-                {/* Influencer Section - Static for MVP */}
-                <div className="mb-16">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="size-12 rounded-full overflow-hidden border-2 border-primary ring-4 ring-primary/10">
-                                <img alt="Chef Virginia" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCwaOEvJhqMAVghjm5wcjQ_nwtLEDvzVsWdAyohCcTJmMtpN1mrfOX7Dd7-tVaDJDMNgr85MXfld5lMgUqmK1suGOnB8wF5n0yT-4bH-1njXTdKLIVWjz1Z4kGLk-yX4DoIg3tW_cxbBVcgzV7Yj9jl4YAr0O1752WIIDjWGrco5in9SJCt1FVt94tuhhrSQbI-pPQH6qzcpdFrcluWQrL72Ky6ugPTnJpYTJu0lLxmdE6tr23EsIWs7d5r9_LJxZiQ4uOfnyUPBAR" />
+                {/* Influencer Section - Dynamic */}
+                {influencer && (
+                    <div className="mb-16">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-4">
+                                <a
+                                    href={influencer.social_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="size-12 rounded-full overflow-hidden border-2 border-primary ring-4 ring-primary/10 hover:scale-110 transition-transform cursor-pointer"
+                                >
+                                    <img alt={influencer.name} className="w-full h-full object-cover" src={influencer.avatar_url} />
+                                </a>
+                                <div>
+                                    <h2 className="text-[#181411] text-xl font-extrabold flex items-center gap-2">
+                                        {influencer.name} <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Influencer Choice</span>
+                                    </h2>
+                                    <p className="text-sm font-medium text-[#181411]/60">{influencer.bio}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-[#181411] text-xl font-extrabold flex items-center gap-2">
-                                    Dicas da Virginia <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Influencer Choice</span>
-                                </h2>
-                                <p className="text-sm font-medium text-[#181411]/60">Pratos que eu consumo no meu dia a dia</p>
+                            <div className="flex gap-2">
+                                <Button variant="icon" icon="chevron_left" size="icon" onClick={() => scrollTips('left')} />
+                                <Button variant="icon" icon="chevron_right" size="icon" onClick={() => scrollTips('right')} />
                             </div>
                         </div>
-                        <div className="flex gap-2">
-                            <Button variant="icon" icon="chevron_left" size="icon" onClick={() => scrollTips('left')} />
-                            <Button variant="icon" icon="chevron_right" size="icon" onClick={() => scrollTips('right')} />
-                        </div>
-                    </div>
 
-                    <div
-                        ref={tipsContainerRef}
-                        className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-6 px-6 lg:mx-0 lg:px-0 scroll-smooth"
-                    >
-                        <RecipeCard variant="compact" id={4} title="Suco Rosa Energizante" category="Consumo Diário" image="https://lh3.googleusercontent.com/aida-public/AB6AXuBjDtSRWok8Vcb25vRH-lQYGaCh6RZJ48VUikCi0gR2q3Y9UfdwEZzy4DHoc5YwM3bI_nGbpjduqNxqf9LhyJBIVUFljmIKXJ-d8ZF6_lBi-IMelOnK_cu7xVR5LbLf5s3U4pYZdwduAFC5OHe6htQjTncurusfIct9hcs-9bw1BXV1y9wcmYhnj2aNxgizGl4IADCL8cpi1cBFq11KjS1rDWTwjQ5wRhyCXiXVlME0pH4ojolocfzw9jvJCBwYjudz48duNkcilQQP" tags={['APROVADO']} />
-                        <RecipeCard variant="compact" id={5} title="Bowl de Frutas" category="Pós Treino" image="https://lh3.googleusercontent.com/aida-public/AB6AXuAt-HjfADcIkPDrRfbHc8xizgsL_MGtMOBn1SfW1Nxxlwz7uuJF9FBqpQdf19yKdvDYFMM0t9i7TyouwJNJO_wXqzA7OBL9Yf0fO2yQWiAxp99on_bVr9U_QFncEyGdX_H8igGdlHbYumLXc_APPDRZYOSb4chJZqVw1OWmN4UIqAbCU3LMbiU-bFKIX44w00sm20dZLTdHgT_Wd2xR8pggpfTA75lJOBIXFOVqOKXJBhgZ9mZ2vaza2RNtOiy4a0afYLuMhnFDLDM4" tags={['DICA']} />
-                        <RecipeCard variant="compact" id={6} title="Sopa Detox" category="Jantar Leve" image="https://lh3.googleusercontent.com/aida-public/AB6AXuAYAfGdgDOx8dks64ypCom89HaIqZR1UXZBtbmbCq0st-LuXTMiPdNWRMIxSGlE96rkAgb8maudeDhthMGuN3G4YNbQyi1ppBxm9a7LJYZigeSE81gpEOkHSh-qp_-We9l9SRPvXqTl0Qu_EVNKXwcxxcqbRHeB5GfsHudkZBUbNEqbFUzsJnEecD8siNO2hNAc4-walMuBDJY8R7FIY2s7fpsq1_T9_GYXqirZ94LOGsj5i_cA3bbIj4A3f_XozYcmElGCpa9SvA0E" tags={['LEVE']} />
-                        <RecipeCard variant="compact" id={7} title="Salada Fit" category="Almoço Rápido" image="https://lh3.googleusercontent.com/aida-public/AB6AXuDffqGqTh7h1CknzG2SHcQTOSih-6RAroyUNNLe9rxSczoGFkKioxUmXRqCd9wlgR7RQT44vkZ6e19RTod5e81jtbFeznv6lNNOYPm2r5uAZ5r_1r7rijebVs0dPzHkHEn0GYLaK0E66RC19rsPc6a3OYdZqxIz7x0tAaMZH7xudxCQ3oSfG72Hc9CfLUzxeJvNT60jZc8VE4WhHsTGLfVBgQFgxvKwG0kXnF8Fj3FwEnrlCQGI44fffeWXiiTyafPkc3obzUkZZ4K5" tags={['FIT']} />
-                        <RecipeCard variant="compact" id={8} title="Salmão Gergelim" category="Premium" image="https://lh3.googleusercontent.com/aida-public/AB6AXuBnoOh6B3NShAujBPFpO-VtbXXatnotLr4Ih6y4V1pbWO8eO_nFwlMx2sjg3ccPxq20zbgr7ul1jnvmVemqDGGm0jH8vww-pixNtP6x9kGq36wzNSUbMua2dH5ODpXZQi6YJZDRd7ejCHZWLrlGgrCsYXj-QzGfyA3TxgAI4XaZCNuimtAaMhjL1g1fnSO22WzMpe6JZlzXHYIiyL4M-Ixt-atT6iJ0RudsP4I5w-dS9QLGXbuLHgwbWnX8JD9eRF6nxmI6SGWSDGI_" tags={['TOP']} />
+                        <div
+                            ref={tipsContainerRef}
+                            className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-6 px-6 lg:mx-0 lg:px-0 scroll-smooth"
+                        >
+                            {influencerRecipes.map((item) => (
+                                <RecipeCard
+                                    key={item.id}
+                                    variant="compact"
+                                    id={item.recipes.id}
+                                    slug={item.recipes.slug}
+                                    title={item.recipes.title}
+                                    category={item.subtitle}
+                                    image={item.recipes.image_url}
+                                    tags={[item.tag]}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Popular Recipes Section */}
                 <div className="mb-16">
@@ -193,7 +242,7 @@ export const Home = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {loading ? (
-                            [1, 2, 3, 4].map(n => <div key={n} className="h-64 bg-gray-200 animate-pulse rounded-2xl"></div>)
+                            [1, 2, 3, 4].map(n => <div key={n} className="h-64 bg-gray-200 animate-pulse rounded-2xl" />)
                         ) : popularRecipes.length > 0 ? (
                             popularRecipes.slice(0, 4).map(recipe => (
                                 <RecipeCard
@@ -208,7 +257,7 @@ export const Home = () => {
                                 />
                             ))
                         ) : (
-                            <p className="text-gray-500 col-span-4">Carregando receitas populares...</p>
+                            <p className="text-gray-500 col-span-4">Nenhuma receita popular encontrada.</p>
                         )}
                     </div>
                 </div>
@@ -223,7 +272,7 @@ export const Home = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {loading ? (
-                            [1, 2, 3, 4].map(n => <div key={n} className="h-64 bg-gray-200 animate-pulse rounded-2xl"></div>)
+                            [1, 2, 3, 4].map(n => <div key={n} className="h-64 bg-gray-200 animate-pulse rounded-2xl" />)
                         ) : trendingRecipes.length > 0 ? (
                             trendingRecipes.map(recipe => (
                                 <RecipeCard
@@ -238,7 +287,7 @@ export const Home = () => {
                                 />
                             ))
                         ) : (
-                            <p className="text-gray-500">Carregando tendências...</p>
+                            <p className="text-gray-500">Nenhuma tendência encontrada.</p>
                         )}
                     </div>
                 </div>

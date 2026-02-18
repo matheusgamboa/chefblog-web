@@ -93,7 +93,7 @@ const Header = () => {
                                     </div>
 
                                     {/* Dropdown Logout */}
-                                    <div className={`absolute top-12 right-0 w-56 bg-white rounded-lg shadow-xl py-2 transition-all duration-200 z-50 transform origin-top-right border border-gray-100 ${isProfileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                                    <div className={`absolute top-12 right-0 w-56 bg-white rounded-lg shadow-xl pt-2 pb-0 transition-all duration-200 z-50 transform origin-top-right border border-gray-100 overflow-hidden ${isProfileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                                         <div className="px-4 py-3 border-b border-gray-100 mb-1">
                                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Conta</p>
                                             <p className="text-sm font-bold text-[#181411] truncate">{user.email}</p>
@@ -108,7 +108,7 @@ const Header = () => {
 
                                         <div className="h-px bg-gray-100 my-1 mx-2"></div>
 
-                                        <button onClick={(e) => { e.stopPropagation(); handleLogout(); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors rounded-b-lg">
+                                        <button onClick={(e) => { e.stopPropagation(); handleLogout(); }} className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors">
                                             <span className="material-symbols-outlined text-[20px]">logout</span> Sair
                                         </button>
                                     </div>

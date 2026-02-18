@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
@@ -9,8 +9,20 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const hideSearch = location.pathname === '/recipes';
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Fechar menu ao clicar fora
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isProfileMenuOpen && !event.target.closest('.profile-menu-container')) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isProfileMenuOpen]);
 
     const handleSearch = (e) => {
         if (e.key === 'Enter' && searchQuery.trim()) {
@@ -68,7 +80,7 @@ const Header = () => {
                                     <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-white"></span>
                                 </button>
                                 <div className="h-10 w-[1px] bg-primary/10 mx-1"></div>
-                                <div className="flex items-center gap-3 relative group cursor-pointer">
+                                <div className="flex items-center gap-3 relative profile-menu-container cursor-pointer" onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
                                     <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-11 border-2 border-primary bg-primary/10 flex items-center justify-center text-primary font-black shadow-sm">
                                         {user.email[0].toUpperCase()}
                                     </div>
@@ -78,7 +90,7 @@ const Header = () => {
                                     </div>
 
                                     {/* Dropdown Logout */}
-                                    <div className="absolute top-12 right-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-right border border-gray-100">
+                                    <div className={`absolute top-12 right-0 w-56 bg-white rounded-lg shadow-xl py-2 transition-all duration-200 z-50 transform origin-top-right border border-gray-100 ${isProfileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                                         <div className="px-4 py-3 border-b border-gray-100 mb-1">
                                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Conta</p>
                                             <p className="text-sm font-bold text-[#181411] truncate">{user.email}</p>

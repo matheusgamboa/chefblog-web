@@ -39,6 +39,10 @@ export const AuthModal = () => {
                 const { error } = await signUp(email, password);
                 if (error) throw error;
                 setMessage('Cadastro realizado! Verifique seu email para confirmar.');
+                // Fechar modal automaticamente após 2 segundos no cadastro
+                setTimeout(() => {
+                    closeLoginModal();
+                }, 2000);
             }
         } catch (err) {
             // Translate common Supabase errors if needed

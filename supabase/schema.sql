@@ -73,14 +73,29 @@ alter table public.recipes enable row level security;
 alter table public.recipe_categories enable row level security;
 alter table public.ingredients enable row level security;
 alter table public.steps enable row level security;
+alter table public.favorites enable row level security;
+alter table public.completed_recipes enable row level security;
 
--- Public Read Policies
-create policy "Public profiles are viewable by everyone." on public.profiles for select using (true);
+-- Profiles Policies
+create policy "Profiles are viewable by authenticated users." on public.profiles for select to authenticated using (true);
+create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id);
+create policy "Users can insert their own profile." on public.profiles for insert with check (auth.uid() = id);
+
+-- Public Read Policies (Content)
 create policy "Categories are viewable by everyone." on public.categories for select using (true);
 create policy "Recipes are viewable by everyone." on public.recipes for select using (true);
 create policy "Recipe Categories are viewable by everyone." on public.recipe_categories for select using (true);
 create policy "Ingredients are viewable by everyone." on public.ingredients for select using (true);
 create policy "Steps are viewable by everyone." on public.steps for select using (true);
+
+-- User Data Policies (Private)
+create policy "Users can view their own favorites" on public.favorites for select using (auth.uid() = user_id);
+create policy "Users can add their own favorites" on public.favorites for insert with check (auth.uid() = user_id);
+create policy "Users can delete their own favorites" on public.favorites for delete using (auth.uid() = user_id);
+
+create policy "Users can view their own completed recipes" on public.completed_recipes for select using (auth.uid() = user_id);
+create policy "Users can add their own completed recipes" on public.completed_recipes for insert with check (auth.uid() = user_id);
+create policy "Users can update their own completed recipes" on public.completed_recipes for update using (auth.uid() = user_id);
 
 -- Insert Mock Data (Categories)
 insert into public.categories (name, icon, slug) values

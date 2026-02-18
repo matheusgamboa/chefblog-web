@@ -46,9 +46,7 @@ const Header = () => {
                     </Link>
                     <nav className="hidden md:flex items-center gap-8">
                         <Link to="/" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Explorar</Link>
-                        <a href="#" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1">
-                            Desafios <span className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full">NOVO</span>
-                        </a>
+
                         <a href="#" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Ranking</a>
                         <a href="#" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Favoritos</a>
                     </nav>

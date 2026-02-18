@@ -195,13 +195,16 @@ export const Home = () => {
                                     href={influencer.social_link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="size-12 rounded-full overflow-hidden border-2 border-primary ring-4 ring-primary/10 hover:scale-110 transition-transform cursor-pointer"
+                                    className="size-12 flex-shrink-0 rounded-full overflow-hidden border-2 border-primary ring-4 ring-primary/10 hover:scale-110 transition-transform cursor-pointer"
                                 >
                                     <img alt={influencer.name} className="w-full h-full object-cover" src={influencer.avatar_url} />
                                 </a>
                                 <div>
-                                    <h2 className="text-[#181411] text-xl font-extrabold flex items-center gap-2">
-                                        {influencer.name} <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Influencer Choice</span>
+                                    <h2 className="text-[#181411] text-xl font-extrabold flex flex-col-reverse md:flex-row md:items-center gap-1 md:gap-2">
+                                        {influencer.name}
+                                        <span className="w-fit bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">
+                                            Influencer Choice
+                                        </span>
                                     </h2>
                                     <p className="text-sm font-medium text-[#181411]/60">{influencer.bio}</p>
                                 </div>

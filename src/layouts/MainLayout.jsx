@@ -47,7 +47,7 @@ const Header = () => {
                     <nav className="hidden md:flex items-center gap-8">
                         <Link to="/" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Explorar</Link>
 
-                        <a href="#" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Ranking</a>
+                        <Link to="/ranking" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Ranking</Link>
                         <a href="#" className="text-[#181411] text-sm font-semibold hover:text-primary transition-colors">Favoritos</a>
                     </nav>
                 </div>

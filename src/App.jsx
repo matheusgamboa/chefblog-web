@@ -4,6 +4,7 @@ import { RecipeDetail } from './pages/RecipeDetail';
 import { GamifiedCooking } from './pages/GamifiedCooking';
 import { AllRecipes } from './pages/AllRecipes';
 import { Profile } from './pages/Profile';
+import { Ranking } from './pages/Ranking';
 import ScrollToTop from './components/ScrollToTop';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/recipe/:slug" element={<RecipeDetail />} />
           <Route path="/recipe/:slug/cook" element={<GamifiedCooking />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/ranking" element={<Ranking />} />
         </Routes>
       </Router>
     </AuthProvider>

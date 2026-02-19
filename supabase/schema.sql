@@ -33,6 +33,8 @@ create table public.recipes (
   slug text unique,
   author_id uuid references public.profiles(id),
   is_featured boolean default false,
+  xp_reward integer default 50,
+  times_completed integer default 0,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -139,6 +141,20 @@ $$;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Function to increment recipe completions
+create or replace function public.increment_recipe_completions(recipe_id_param bigint)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.recipes
+  set times_completed = times_completed + 1
+  where id = recipe_id_param;
+end;
+$$;
 
 -- Profiles Policies
 create policy "Profiles are viewable by authenticated users." on public.profiles for select to authenticated using (true);

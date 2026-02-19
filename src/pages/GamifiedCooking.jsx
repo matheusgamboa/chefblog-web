@@ -102,6 +102,9 @@ export const GamifiedCooking = () => {
                 level: newLevel,
             }).eq('id', user.id);
 
+            // 3. Incrementa o contador de conclusões da receita
+            await supabase.rpc('increment_recipe_completions', { recipe_id_param: recipe.id });
+
             setXpEarned(rewardXP);
         } catch (error) {
             console.error('Erro ao salvar conclusão:', error.message);
